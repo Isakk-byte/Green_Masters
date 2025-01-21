@@ -8,12 +8,22 @@ namespace Green_Masters
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private Texture2D _testImg;
+        
+        Texture2D _logoImg;
+        Texture2D _personImg;
+        Texture2D _ballImg;
+        Texture2D _cloudImg;
+        Texture2D _buttonImg;
+        Texture2D _flagImg;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+           
+            _graphics.PreferredBackBufferWidth = 1700; // Bredd
+            _graphics.PreferredBackBufferHeight = 800; // Höjd
+            _graphics.ApplyChanges(); // Tillämpar ändringarna
         }
 
         protected override void Initialize()
@@ -27,7 +37,12 @@ namespace Green_Masters
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _testImg = Texture2D.FromFile(GraphicsDevice, "../../img/pennor.jpg");
+            _logoImg = Texture2D.FromFile(GraphicsDevice, "../../img/Logo.png");
+            _ballImg = Texture2D.FromFile(GraphicsDevice, "../../img/Ball.png");
+            _personImg = Texture2D.FromFile(GraphicsDevice, "../../img/Person.png");
+            _cloudImg = Texture2D.FromFile(GraphicsDevice, "../../img/Cloud.png");
+            _flagImg = Texture2D.FromFile(GraphicsDevice, "../../img/Flag.png");
+
 
             // TODO: use this.Content to load your game content here
         }
@@ -44,11 +59,11 @@ namespace Green_Masters
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(new Color(135,179,93));
 
             _spriteBatch.Begin();
 
-            _spriteBatch.Draw(_testImg, new Vector2(200, 200), Color.White);
+            _spriteBatch.Draw(_logoImg, new Vector2(600, 50), Color.White);
 
             _spriteBatch.End();
 
