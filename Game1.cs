@@ -8,7 +8,7 @@ namespace Green_Masters
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-
+        private Texture2D _testImg;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -27,6 +27,8 @@ namespace Green_Masters
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            _testImg = Texture2D.FromFile(GraphicsDevice, "../../img/pennor.jpg");
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -44,7 +46,11 @@ namespace Green_Masters
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            _spriteBatch.Begin();
+
+            _spriteBatch.Draw(_testImg, new Vector2(200, 200), Color.White);
+
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
