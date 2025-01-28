@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Green_Masters
 {
-    internal class Gamestate
+    public class Gamestate
     {
         public enum gameStates
         {
