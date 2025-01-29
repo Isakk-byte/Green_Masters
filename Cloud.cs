@@ -26,7 +26,7 @@ namespace Green_Masters
             // Om molnet går utanför skärmen, flytta det tillbaka till vänster
             if (_position.X > screenWidth)
             {
-                _position.X = 0; 
+                _position.X = -300; 
             }
         }
 

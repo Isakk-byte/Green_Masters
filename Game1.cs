@@ -21,6 +21,8 @@ namespace Green_Masters
         Texture2D _arrowImg;
         Texture2D _groundImg;
 
+        private Ball _ball;
+
         private List<Cloud> _clouds;
 
         private Vector2 _arrowPosition;
@@ -45,6 +47,9 @@ namespace Green_Masters
 
         protected override void Initialize()
         {
+
+            _ball= new Ball(new Vector2(0,0), new Vector2(300, 700), _ballImg, Color.White);
+
             _clouds = new List<Cloud>
             {
                 new Cloud(new Vector2(30, 0), new Vector2(0, 50), _cloudImg, Color.White),
@@ -77,6 +82,7 @@ namespace Green_Masters
 
             //sätter punkten att rotera runt
             _arrowOrigin = new Vector2(0,_arrowImg.Height);
+            //_arrowOrigin = new Vector2(_ballImg.Width / 2, _ballImg.Height / 2);
         }
 
         protected override void Update(GameTime gameTime)
@@ -124,15 +130,20 @@ namespace Green_Masters
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(new Color(135,179,93));
+            //loading color
+            //GraphicsDevice.Clear(new Color(135,179,93));
+
+            GraphicsDevice.Clear(new Color(163, 238, 255));
+
 
             _spriteBatch.Begin();
 
             _spriteBatch.Draw(_groundImg, new Vector2(0, 700), Color.White);
             _spriteBatch.Draw(_personImg, new Vector2(10, 380), Color.White);
-            _spriteBatch.Draw(_ballImg, new Vector2(300, 700), Color.White);
-            _spriteBatch.Draw(_flagImg, new Vector2(1500, 500), Color.White);
             
+            _spriteBatch.Draw(_flagImg, new Vector2(1500, 500), Color.White);
+
+            _ball.Draw(_spriteBatch, _ballImg);
 
             foreach (var cloud in _clouds)
             {
