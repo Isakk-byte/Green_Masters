@@ -20,6 +20,7 @@ namespace Green_Masters
         Texture2D _flagImg;
         Texture2D _arrowImg;
         Texture2D _groundImg;
+        Texture2D _powerbarImg;
 
         private Ball _ball;
 
@@ -48,7 +49,7 @@ namespace Green_Masters
         protected override void Initialize()
         {
 
-            _ball= new Ball(new Vector2(0,0), new Vector2(300, 700), _ballImg, Color.White);
+            _ball= new Ball(new Vector2(0,0), new Vector2(300, 680), _ballImg, Color.White);
 
             _clouds = new List<Cloud>
             {
@@ -57,7 +58,7 @@ namespace Green_Masters
                 new Cloud(new Vector2(30, 0), new Vector2(560, 50), _cloudImg, Color.White)
             };
 
-            _arrowPosition = new Vector2(340, 690);
+            _arrowPosition = new Vector2(315, 695);
             _arrowRotation = 0f;
 
             //konverterar en vinkel från grader till radianer
@@ -79,9 +80,10 @@ namespace Green_Masters
             _flagImg = Texture2D.FromFile(GraphicsDevice, "../../img/Flag.png");
             _arrowImg = Texture2D.FromFile(GraphicsDevice, "../../img/Arrow.png");
             _groundImg = Texture2D.FromFile(GraphicsDevice, "../../img/Ground.png");
+            _powerbarImg = Texture2D.FromFile(GraphicsDevice, "../../img/Powerbar.png");
 
             //sätter punkten att rotera runt
-            _arrowOrigin = new Vector2(0,_arrowImg.Height);
+            _arrowOrigin = new Vector2(_arrowImg.Width/2,_arrowImg.Height);
             //_arrowOrigin = new Vector2(_ballImg.Width / 2, _ballImg.Height / 2);
         }
 
@@ -140,10 +142,12 @@ namespace Green_Masters
 
             _spriteBatch.Draw(_groundImg, new Vector2(0, 700), Color.White);
             _spriteBatch.Draw(_personImg, new Vector2(10, 380), Color.White);
-            
-            _spriteBatch.Draw(_flagImg, new Vector2(1500, 500), Color.White);
 
-            _ball.Draw(_spriteBatch, _ballImg);
+            _spriteBatch.Draw(_logoImg, new Vector2(580, 120), Color.White);
+            _spriteBatch.Draw(_flagImg, new Vector2(1500, 500), Color.White);
+            _spriteBatch.Draw(_powerbarImg, new Vector2(170, 750), Color.White);
+
+
 
             foreach (var cloud in _clouds)
             {
@@ -161,7 +165,7 @@ namespace Green_Masters
                 SpriteEffects.None,           // Inga spegeleffekter
                 0f                            // Layer depth (0 = längst fram)
             );
-
+            _ball.Draw(_spriteBatch, _ballImg);
             _spriteBatch.End();
 
             base.Draw(gameTime);
