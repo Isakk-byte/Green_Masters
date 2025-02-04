@@ -155,17 +155,19 @@ namespace Green_Masters
             }
 
             _spriteBatch.Draw(
-                _arrowImg,                // Texturen
-                _arrowPosition,               // Positionen på skärmen
-                null,                         // Källrektangel (null = hela texturen används)
-                Color.White,                  // Färg (White = originalfärg)
-                _arrowRotation,               // Rotationsvinkeln (45 grader)
-                _arrowOrigin,                 // Ursprunget för rotation (nedre vänstra hörnet)
-                1.0f,                         // Skalning
-                SpriteEffects.None,           // Inga spegeleffekter
-                0f                            // Layer depth (0 = längst fram)
+                _arrowImg,                
+                _arrowPosition,              
+                null,                        
+                Color.White,                  
+                _arrowRotation,               
+                _arrowOrigin,                 
+                1.0f,                         
+                SpriteEffects.None,          
+                0f                            
             );
+
             _ball.Draw(_spriteBatch, _ballImg);
+            
             _spriteBatch.End();
 
             base.Draw(gameTime);
