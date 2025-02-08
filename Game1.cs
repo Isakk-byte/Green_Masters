@@ -210,9 +210,9 @@ namespace Green_Masters
                 {
                     _isButton1Visible = false;
                     _isButton2Visible = true;
-                    LoadData loadingScreen = new LoadData();
+                    /*LoadData loadingScreen = new LoadData();
 
-                    callLoadingOnce = true;
+                    callLoadingOnce = true;*/
                     /*Thread t = new Thread(() => loadingScreen.LoadMethod(out Gamestate activateState));
                     t.Start();*/
                 }
