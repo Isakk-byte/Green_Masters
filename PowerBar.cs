@@ -16,5 +16,9 @@ namespace Green_Masters
             _position = position;
             _texture = texture;
         }
+        public void Draw(SpriteBatch spriteBatch, Texture2D texture)
+        {
+            spriteBatch.Draw(texture, _position, Color.White);
+        }
     }
 }
