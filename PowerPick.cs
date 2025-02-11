@@ -30,7 +30,7 @@ namespace Green_Masters
         {
             _position += _velocity;
 
-            if (_position.X > _powerbarImg.) { }
+            if (_position.X > _powerbarImg._position.X) { }
         }
 
         public void Draw(SpriteBatch spriteBatch)

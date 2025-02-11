@@ -94,6 +94,8 @@ namespace Green_Masters
             _loadbar3 = new Rectangle(((WIDTH / 2) + (00)), ((HEIGHT / 2) - (25)), 50, 50);
             _loadbar4 = new Rectangle(((WIDTH / 2) + (60)), ((HEIGHT / 2) - (25)), 50, 50);
 
+
+            _currentMouseState = Mouse.GetState();
             /*if (_gameState == "Game")
             {
                 _ball = new Ball(new Vector2(0, 0), new Vector2(300, 680), _ballImg, Color.White);
@@ -154,6 +156,8 @@ namespace Green_Masters
 
         protected override void Update(GameTime gameTime)
         {
+            _previousMouseState = _currentMouseState;
+            _currentMouseState = Mouse.GetState();
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
@@ -210,11 +214,11 @@ namespace Green_Masters
                 {
                     _isButton1Visible = false;
                     _isButton2Visible = true;
-                    /*LoadData loadingScreen = new LoadData();
-
-                    callLoadingOnce = true;*/
-                    /*Thread t = new Thread(() => loadingScreen.LoadMethod(out Gamestate activateState));
-                    t.Start();*/
+                    LoadData loadingScreen = new LoadData();
+                    
+                    callLoadingOnce = true;
+                    Thread t = new Thread(() => loadingScreen.LoadMethod(out activateState, ref callLoadingOnce));
+                    t.Start();
                 }
                 if (_buttonRectangle2.Contains(_currentMouseState.Position))
                 {

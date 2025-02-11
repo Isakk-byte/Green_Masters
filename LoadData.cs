@@ -10,10 +10,11 @@ namespace Green_Masters
 {
     public class LoadData
     {
-        public void LoadMethod(out gameStates activateState)
+        public void LoadMethod(out gameStates activateState, ref bool callLoadingOnce)
         {
             Thread.Sleep(5000); //Låtsasladda i 5 sekunder
-            activateState = Gamestate.gameStates.startMenu;
+            activateState = Gamestate.gameStates.playing;
+            callLoadingOnce = false;
         }
     }
 }
