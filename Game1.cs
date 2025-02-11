@@ -96,24 +96,24 @@ namespace Green_Masters
 
 
             _currentMouseState = Mouse.GetState();
-            /*if (_gameState == "Game")
-            {
-                _ball = new Ball(new Vector2(0, 0), new Vector2(300, 680), _ballImg, Color.White);
+            //if (_gameState == "Game")
+            //{
+            _ball = new Ball(new Vector2(0, 0), new Vector2(300, 680), _ballImg, Color.White);
 
-                _clouds = new List<Cloud>
+            _clouds = new List<Cloud>
             {
                 new Cloud(new Vector2(30, 0), new Vector2(0, 50), _cloudImg, Color.White),
                 new Cloud(new Vector2(30, 0), new Vector2(1100, 50), _cloudImg, Color.White),
                 new Cloud(new Vector2(30, 0), new Vector2(560, 50), _cloudImg, Color.White)
             };
 
-                _arrowPosition = new Vector2(315, 695);
-                _arrowRotation = 0f;
+            _arrowPosition = new Vector2(315, 695);
+            _arrowRotation = 0f;
 
-                //konverterar en vinkel från grader till radianer
-                _rotationSpeed = MathHelper.ToRadians(90); // 90 grader per sekund
-                _targetRotation = MathHelper.ToRadians(90);
-            }*/
+            //konverterar en vinkel från grader till radianer
+            _rotationSpeed = MathHelper.ToRadians(90); // 90 grader per sekund
+            _targetRotation = MathHelper.ToRadians(90);
+            //}
 
 
             base.Initialize();
@@ -215,7 +215,7 @@ namespace Green_Masters
                     _isButton1Visible = false;
                     _isButton2Visible = true;
                     LoadData loadingScreen = new LoadData();
-                    
+
                     callLoadingOnce = true;
                     Thread t = new Thread(() => loadingScreen.LoadMethod(out activateState, ref callLoadingOnce));
                     t.Start();
