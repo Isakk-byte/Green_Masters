@@ -230,14 +230,14 @@ namespace Green_Masters
                 else if (_currentShootingState == "powerMoving")
                 {
 
-                    _currentPower = 10f;
+                    //_currentPower = 10f;
 
                     //if button pressed, move to next type
                     _previousKeyboardState = _currentKeyboardState;
                     _currentKeyboardState = Keyboard.GetState();
                     if (/*_currentMouseState.LeftButton == ButtonState.Pressed || */_currentKeyboardState.IsKeyUp(Keys.Space) && _previousKeyboardState.IsKeyDown(Keys.Space))
                     {
-                        _currentPower = (_powerPick._position.X - _powerBar._position.X) / 10f;
+                        _currentPower = (_powerPick._position.X - _powerBar._position.X) / 15f;
                         _currentShootingState = "shot";
                     }
 
@@ -277,9 +277,25 @@ namespace Green_Masters
                             _ball._velocity.Y = _ball._velocity.Y * -0.75f; // studs
                             _ball._velocity.X = _ball._velocity.X * 0.70f; // gräsfriktion
                         }
-                        _ball._position += _ball._velocity;
+
+                        //check if ball is still
+                        if(_ball._velocity.X <= 1f && _ball._velocity.Y <= 1f)
+                        {
+                            //to next state
+                            _currentShootingState = "stopped";
+                        }
+                        else
+                        {
+                            _ball._position += _ball._velocity;
+                        }
                     }
+                    
                     //all other times, move ball accordingly
+                }
+                else if(_currentShootingState == "stopped")
+                {
+                    //calculate score (add count to how many shots have been taken on this flag, or calculate score if goal was done)
+                    //start next round and move flag towards player according to how close the shot was
                 }
             }
 
