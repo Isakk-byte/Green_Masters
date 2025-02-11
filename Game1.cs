@@ -295,6 +295,20 @@ namespace Green_Masters
                 else if(_currentShootingState == "stopped")
                 {
                     //calculate score (add count to how many shots have been taken on this flag, or calculate score if goal was done)
+
+                    /*
+                    if (ball is utanför skärm)
+                        starta om rundan, inga poäng
+                    else if ( ABS(ball x pos) - abs(flag x pos) <= 1f) generella distance mellan boll och flagga i abs värde
+                        the ball was in the hole! next round
+                     else 
+                        flag pos x -= abs(player pos x) - abs(ball pos x)
+                        restart round
+                     
+                     */
+
+
+
                     //start next round and move flag towards player according to how close the shot was
                 }
             }
