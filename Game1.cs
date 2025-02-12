@@ -26,6 +26,7 @@ namespace Green_Masters
         private Ball _ball;
         private PowerPick _powerPick;
         private PowerBar _powerBar;
+        private Flag _flag;
 
         private List<Cloud> _clouds;
 
@@ -82,6 +83,8 @@ namespace Green_Masters
 
         private float _loadbarTimer = 0f;
 
+        private int score = 0;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -100,10 +103,10 @@ namespace Green_Masters
             _buttonRectangle = new Rectangle(((WIDTH / 2) - (_playButtonWidth / 2)), ((HEIGHT / 2)), _playButtonWidth, _playButtonHeight);
             _buttonRectangle2 = new Rectangle(((WIDTH / 2) - (_playButtonWidth / 2)), ((HEIGHT / 2) + (_playButtonHeight + 30)), _playButtonWidth, _playButtonHeight);
 
-            _loadbar1 = new Rectangle(((WIDTH / 2) - (120)), ((HEIGHT / 2) - (25)), 50, 50);
-            _loadbar2 = new Rectangle(((WIDTH / 2) - (60)), ((HEIGHT / 2) - (25)), 50, 50);
-            _loadbar3 = new Rectangle(((WIDTH / 2) + (00)), ((HEIGHT / 2) - (25)), 50, 50);
-            _loadbar4 = new Rectangle(((WIDTH / 2) + (60)), ((HEIGHT / 2) - (25)), 50, 50);
+            _loadbar1 = new Rectangle(((WIDTH / 2) - (120)), (HEIGHT - (205)), 50, 50);
+            _loadbar2 = new Rectangle(((WIDTH / 2) - (60)), (HEIGHT - (205)), 50, 50);
+            _loadbar3 = new Rectangle(((WIDTH / 2) + (00)), (HEIGHT - (205)), 50, 50);
+            _loadbar4 = new Rectangle(((WIDTH / 2) + (60)), (HEIGHT - (205)), 50, 50);
 
 
             _currentMouseState = Mouse.GetState();
@@ -113,6 +116,7 @@ namespace Green_Masters
 
             _powerBar = new PowerBar(new Vector2(170, 750), _powerbarImg, Color.White);
             _powerPick = new PowerPick(new Vector2(5, 0), _powerBar._position, _powerPickImg, Color.White);
+            _flag = new Flag(new Vector2(1500, 500), _flagImg, Color.White);
 
             _clouds = new List<Cloud>
             {
@@ -166,7 +170,7 @@ namespace Green_Masters
             _buttonRectangle2.X + (_playButtonWidth - textSize2.X) / 2,
             _buttonRectangle2.Y + (_playButtonHeight - textSize2.Y) / 2);
 
-            _loadingTextPosition = new Vector2(((WIDTH / 2) - (textSize3.X / 2)), ((HEIGHT / 2) + 50));
+            _loadingTextPosition = new Vector2(((WIDTH / 2) - (textSize3.X / 2)), (HEIGHT- 270));
         }
 
         protected override void Update(GameTime gameTime)
@@ -226,12 +230,13 @@ namespace Green_Masters
                         else
                             _targetRotation = MathHelper.ToRadians(90); // Nästa mål är att peka höger
                     }
+                    _powerPick._position.X = _powerBar._position.X;
                 }
                 else if (_currentShootingState == "powerMoving")
                 {
 
                     //_currentPower = 10f;
-
+                    
                     //if button pressed, move to next type
                     _previousKeyboardState = _currentKeyboardState;
                     _currentKeyboardState = Keyboard.GetState();
@@ -304,8 +309,46 @@ namespace Green_Masters
                      else 
                         flag pos x -= abs(player pos x) - abs(ball pos x)
                         restart round
-                     
                      */
+
+                    if (_ball._position.X > 1700f)
+                    {
+                        //reset round and give 0 points
+                        _flag._position.X = 1600f;
+                        _ball._position.X = 300f;
+                        _initializeBallShot = false;
+
+                        _currentShootingState = "arrowMoving";
+                    }
+                    else if (MathF.Abs(_ball._position.X - _flag._position.X) <= 50f) //change threshold for putt size
+                    {
+                        //ball has been putted into hole! reset round and calc(short for calculation) points
+                        score++;
+                        _flag._position.X = 1600f;
+                        _ball._position.X = 300f;
+                        _initializeBallShot = false;
+
+                        _currentShootingState = "arrowMoving";
+                    }
+                    else 
+                    {
+                        //if(_ball._position.X > _flag._position.X)
+                        //{
+                        //    //_flag._position.X += ((_ball._position.X - MathF.Abs(_ball._position.X - _flag._position.X)) - 300f);
+
+                        //}
+                        //else
+                        //{
+                        //    _flag._position.X -= MathF.Abs(_ball._position.X - 300f);
+                        //}
+                        _flag._position.X = 300f + MathF.Abs(_ball._position.X - _flag._position.X);
+
+                        _ball._position.X = 300f;
+                        _initializeBallShot = false;
+                        score++;
+                        _currentShootingState = "arrowMoving";
+                    }
+
 
 
 
@@ -344,11 +387,12 @@ namespace Green_Masters
             //loading color
             //GraphicsDevice.Clear(new Color(135,179,93));
 
+            //menu himmel färg
             GraphicsDevice.Clear(new Color(163, 238, 255));
 
             if (callLoadingOnce)
             {
-                GraphicsDevice.Clear(Color.GreenYellow);
+                GraphicsDevice.Clear(new Color(135, 179, 93));
                 LoadAnimation(gameTime);
             }
 
@@ -364,8 +408,7 @@ namespace Green_Masters
                 _spriteBatch.Draw(_groundImg, new Vector2(0, 700), Color.White);
                 _spriteBatch.Draw(_personImg, new Vector2(10, 380), Color.White);
 
-                _spriteBatch.Draw(_logoImg, new Vector2(580, 120), Color.White);
-                _spriteBatch.Draw(_flagImg, new Vector2(1500, 500), Color.White);
+               
                 //_spriteBatch.Draw(_powerbarImg, new Vector2(170, 750), Color.White);
 
 
@@ -390,6 +433,7 @@ namespace Green_Masters
                 _ball.Draw(_spriteBatch, _ballImg);
                 _powerBar.Draw(_spriteBatch, _powerbarImg);
                 _powerPick.Draw(_spriteBatch, _powerPickImg);
+                _flag.Draw(_spriteBatch, _flagImg);
 
                 _spriteBatch.End();
             }
@@ -401,6 +445,8 @@ namespace Green_Masters
             _spriteBatch.Begin();
             _spriteBatch.DrawString(_buttonFont, _loadingText, _loadingTextPosition, Color.White);
             _loadbarTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            _spriteBatch.Draw(_logoImg, new Vector2(580, 70), Color.White);
 
             if (_loadbarTimer < 1f)
             {
