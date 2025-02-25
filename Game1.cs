@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+//using Microsoft.Xna.Framework.Media;
 
 namespace Green_Masters
 {
@@ -85,6 +86,8 @@ namespace Green_Masters
 
         private int score = 0;
 
+        //Song backgroundMusic;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -151,6 +154,8 @@ namespace Green_Masters
             _powerbarImg = Texture2D.FromFile(GraphicsDevice, "../../img/Powerbar.png");
             _powerPickImg = Texture2D.FromFile(GraphicsDevice, "../../img/PowerPick.png");
 
+            //backgroundMusic = Content.Load<Song>("musikfilens_namn_utan_ändelse");
+
             //sätter punkten att rotera runt
             _arrowOrigin = new Vector2(_arrowImg.Width / 2, _arrowImg.Height);
             //_arrowOrigin = new Vector2(_ballImg.Width / 2, _ballImg.Height / 2);
@@ -175,6 +180,10 @@ namespace Green_Masters
 
         protected override void Update(GameTime gameTime)
         {
+
+            //MediaPlayer.Play(backgroundMusic);
+           // MediaPlayer.IsRepeating = true; // Loopa musiken om du vill
+
             _previousMouseState = _currentMouseState;
             _currentMouseState = Mouse.GetState();
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
