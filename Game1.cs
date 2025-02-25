@@ -376,7 +376,7 @@ namespace Green_Masters
 
 
 
-                    if (_hole == 5)
+                    if (_hole == 5) //Avslutar spelet efter 5 hål
                     {
                         Exit();
                     }
