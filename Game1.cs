@@ -84,7 +84,11 @@ namespace Green_Masters
 
         private float _loadbarTimer = 0f;
 
-        private int score = 0;
+        private float _score = 0;
+        private float _shots = 0;
+        public int _hole = 0;
+        private float _totalShots = 0;
+        public string _scoreText = "Score: 0";
 
         //Song backgroundMusic;
 
@@ -319,7 +323,7 @@ namespace Green_Masters
                         flag pos x -= abs(player pos x) - abs(ball pos x)
                         restart round
                      */
-
+                    _shots++;
                     if (_ball._position.X > 1700f)
                     {
                         //reset round and give 0 points
@@ -329,10 +333,22 @@ namespace Green_Masters
 
                         _currentShootingState = "arrowMoving";
                     }
-                    else if (MathF.Abs(_ball._position.X - _flag._position.X) <= 50f) //change threshold for putt size
+                    else if (MathF.Abs(_ball._position.X - _flag._position.X) <= 50f) //check if goal
                     {
+                        _hole++;
                         //ball has been putted into hole! reset round and calc(short for calculation) points
-                        score++;
+                        if (_shots == 1)
+                        {
+                            _score += 15000;
+                        }
+                        else
+                        {
+                            _score += MathF.Round(10000 * MathF.Pow(2.7f, -0.256f * (_shots - 1)));
+                        }
+                            //P(slag)=10000 × e^(−0.256(slag−1))
+                        _totalShots += _shots;
+                        _shots = 0;
+                        _scoreText = "Score: " + _score;
                         _flag._position.X = 1600f;
                         _ball._position.X = 300f;
                         _initializeBallShot = false;
@@ -354,13 +370,16 @@ namespace Green_Masters
 
                         _ball._position.X = 300f;
                         _initializeBallShot = false;
-                        score++;
+                        
                         _currentShootingState = "arrowMoving";
                     }
 
 
 
-
+                    if (_hole == 5)
+                    {
+                        Exit();
+                    }
                     //start next round and move flag towards player according to how close the shot was
                 }
             }
@@ -417,7 +436,8 @@ namespace Green_Masters
                 _spriteBatch.Draw(_groundImg, new Vector2(0, 700), Color.White);
                 _spriteBatch.Draw(_personImg, new Vector2(10, 380), Color.White);
 
-               
+                _spriteBatch.DrawString(_buttonFont, _scoreText, new Vector2(600, 300), Color.White);
+
                 //_spriteBatch.Draw(_powerbarImg, new Vector2(170, 750), Color.White);
 
 
