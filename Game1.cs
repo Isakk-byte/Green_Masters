@@ -71,6 +71,8 @@ namespace Green_Masters
 
         public SpriteFont _buttonFont;
 
+        public string _mainText = "Green Masters";
+
         public string _buttonText = "Play";
         public Vector2 _buttonTextPosition;
 
@@ -107,8 +109,8 @@ namespace Green_Masters
 
         protected override void Initialize()
         {
-            _buttonRectangle = new Rectangle(((WIDTH / 2) - (_playButtonWidth / 2)), ((HEIGHT / 2)), _playButtonWidth, _playButtonHeight);
-            _buttonRectangle2 = new Rectangle(((WIDTH / 2) - (_playButtonWidth / 2)), ((HEIGHT / 2) + (_playButtonHeight + 30)), _playButtonWidth, _playButtonHeight);
+            _buttonRectangle = new Rectangle(((WIDTH / 2) - (_playButtonWidth / 2)), ((HEIGHT / 2)+55), _playButtonWidth, _playButtonHeight);
+            _buttonRectangle2 = new Rectangle(((WIDTH / 2) - (_playButtonWidth / 2)), ((HEIGHT / 2) + (_playButtonHeight + 85)), _playButtonWidth, _playButtonHeight);
 
             _loadbar1 = new Rectangle(((WIDTH / 2) - (120)), (HEIGHT - (205)), 50, 50);
             _loadbar2 = new Rectangle(((WIDTH / 2) - (60)), (HEIGHT - (205)), 50, 50);
@@ -427,7 +429,7 @@ namespace Green_Masters
                 _spriteBatch.Draw(_groundImg, new Vector2(0, 700), Color.White);
                 _spriteBatch.Draw(_personImg, new Vector2(10, 380), Color.White);
 
-                _spriteBatch.DrawString(_buttonFont, _scoreText, new Vector2(600, 300), Color.White);
+                _spriteBatch.DrawString(_buttonFont, _scoreText, new Vector2((WIDTH/2-20), 300), Color.White);
 
                 //_spriteBatch.Draw(_powerbarImg, new Vector2(170, 750), Color.White);
 
@@ -466,7 +468,7 @@ namespace Green_Masters
             _spriteBatch.DrawString(_buttonFont, _loadingText, _loadingTextPosition, Color.White);
             _loadbarTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            _spriteBatch.Draw(_logoImg, new Vector2(580, 70), Color.White);
+            _spriteBatch.Draw(_logoImg, new Vector2(600, 70), Color.White);
 
             if (_loadbarTimer < 1f)
             {
@@ -495,15 +497,19 @@ namespace Green_Masters
         private void DrawMenu()
         {
             _spriteBatch.Begin();
+
+            _spriteBatch.Draw(_logoImg, new Vector2(600,0), Color.White);
+            _spriteBatch.Draw(_groundImg, new Vector2(0, 700), Color.White);
+
             if (_isButton1Visible)
             {
-                _spriteBatch.Draw(_buttonTexture, _buttonRectangle, Color.CornflowerBlue);
+                _spriteBatch.Draw(_buttonTexture, _buttonRectangle, Color.Red);
                 _spriteBatch.DrawString(_buttonFont, _buttonText, _buttonTextPosition, Color.White);
             }
 
             if (_isButton2Visible)
             {
-                _spriteBatch.Draw(_buttonTexture, _buttonRectangle2, Color.CornflowerBlue);
+                _spriteBatch.Draw(_buttonTexture, _buttonRectangle2, Color.Red);
                 _spriteBatch.DrawString(_buttonFont, _buttonText2, _buttonTextPosition2, Color.White);
             }
             _spriteBatch.End();
