@@ -54,6 +54,7 @@ namespace Green_Masters
 
         public Texture2D _buttonTexture;
 
+        public Rectangle _scoreboard;
         public Rectangle _buttonRectangle;
         public Rectangle _buttonRectangle2;
         public Rectangle _loadbar1;
@@ -111,6 +112,8 @@ namespace Green_Masters
         {
             _buttonRectangle = new Rectangle(((WIDTH / 2) - (_playButtonWidth / 2)), ((HEIGHT / 2)+55), _playButtonWidth, _playButtonHeight);
             _buttonRectangle2 = new Rectangle(((WIDTH / 2) - (_playButtonWidth / 2)), ((HEIGHT / 2) + (_playButtonHeight + 85)), _playButtonWidth, _playButtonHeight);
+
+            _scoreboard = new Rectangle((WIDTH / 2)-250, (HEIGHT / 2)-350, 500, 600);
 
             _loadbar1 = new Rectangle(((WIDTH / 2) - (120)), (HEIGHT - (205)), 50, 50);
             _loadbar2 = new Rectangle(((WIDTH / 2) - (60)), (HEIGHT - (205)), 50, 50);
@@ -371,7 +374,7 @@ namespace Green_Masters
 
                     if (_hole == 5) //Avslutar spelet efter 5 hål
                     {
-                        Exit();
+                        activateState = Gamestate.gameStates.endScen;
                     }
                     //start next round and move flag towards player according to how close the shot was
                 }
@@ -419,7 +422,13 @@ namespace Green_Masters
 
             else if (activateState == Gamestate.gameStates.startMenu)
             {
-                DrawMenu();
+                _spriteBatch.Begin();
+
+                _spriteBatch.Draw(_groundImg, new Vector2(0, 700), Color.White);
+                _spriteBatch.Draw(_buttonTexture, _scoreboard, Color.Brown);
+
+                _spriteBatch.End();
+                //DrawMenu();
             }
 
             else if (activateState == Gamestate.gameStates.playing)
@@ -456,6 +465,15 @@ namespace Green_Masters
                 _powerBar.Draw(_spriteBatch, _powerbarImg);
                 _powerPick.Draw(_spriteBatch, _powerPickImg);
                 _flag.Draw(_spriteBatch, _flagImg);
+
+                _spriteBatch.End();
+            }
+            else if (activateState == Gamestate.gameStates.endScen)
+            {
+                _spriteBatch.Begin();
+
+                _spriteBatch.Draw(_groundImg, new Vector2(0, 700), Color.White);
+                _spriteBatch.Draw(_buttonTexture, _scoreboard, Color.Black);
 
                 _spriteBatch.End();
             }
