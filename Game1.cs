@@ -159,7 +159,7 @@ namespace Green_Masters
             _powerPickImg = Texture2D.FromFile(GraphicsDevice, "../../img/PowerPick.png");
 
             //backgroundMusic = Content.Load<Song>("musikfilens_namn_utan_ändelse");
-
+            
             //sätter punkten att rotera runt
             _arrowOrigin = new Vector2(_arrowImg.Width / 2, _arrowImg.Height);
             //_arrowOrigin = new Vector2(_ballImg.Width / 2, _ballImg.Height / 2);
@@ -238,10 +238,10 @@ namespace Green_Masters
                     if (_arrowRotation == _targetRotation)
                     {
                         // Växla mellan uppåt (0 radianer) och höger (90 grader)
-                        if (_targetRotation == MathHelper.ToRadians(90))
-                            _targetRotation = 0f; // Nästa mål är att peka uppåt
+                        if (_targetRotation == MathHelper.ToRadians(80))
+                            _targetRotation = MathHelper.ToRadians(10); // Nästa mål är att peka uppåt
                         else
-                            _targetRotation = MathHelper.ToRadians(90); // Nästa mål är att peka höger
+                            _targetRotation = MathHelper.ToRadians(80); // Nästa mål är att peka höger
                     }
                     _powerPick._position.X = _powerBar._position.X;
                 }
@@ -287,17 +287,25 @@ namespace Green_Masters
                     }
                     else if (_initializeBallShot)
                     {
+
                         //ball position += (ball velocity.x - 9.8 *deltaTime, ball velocity.y -1 * delta time)
                         _ball._velocity = new Vector2(_ball._velocity.X, _ball._velocity.Y + (9.8f * deltaTime));
                         if (_ball._position.Y > 700 /*- _ballImg.Height*/)
                         {
                             _ball._position.Y = 700;
-                            _ball._velocity.Y = _ball._velocity.Y * -0.75f; // studs
-                            _ball._velocity.X = _ball._velocity.X * 0.70f; // gräsfriktion
+                            _ball._velocity.Y = _ball._velocity.Y * -0.60f; // studs
+                            _ball._velocity.X = _ball._velocity.X * 0.60f; // gräsfriktion
                         }
 
                         //check if ball is still
-                        if(_ball._velocity.X <= 1f && _ball._velocity.Y <= 1f)
+                        if (_ball._position.X >= _flag._position.X && _ball._position.X < _flag._position.X + _flagImg.Width - _ballImg.Width
+                            && _ball._position.Y >= 730 - (_flagImg.Width/2) && _ball._position.Y < 730 + (_flagImg.Width / 2)
+                            && _ball._velocity.X < _ball._velocity.Y* 4)
+                        {
+                            _currentShootingState = "stopped";
+
+                        }
+                        else if(_ball._velocity.X <= 1f && _ball._velocity.Y <= 1f)
                         {
                             //to next state
                             _currentShootingState = "stopped";
@@ -312,19 +320,10 @@ namespace Green_Masters
                 }
                 else if(_currentShootingState == "stopped")
                 {
-                    //calculate score (add count to how many shots have been taken on this flag, or calculate score if goal was done)
+                    System.Threading.Thread.Sleep(1500);
 
-                    /*
-                    if (ball is utanför skärm)
-                        starta om rundan, inga poäng
-                    else if ( ABS(ball x pos) - abs(flag x pos) <= 1f) generella distance mellan boll och flagga i abs värde
-                        the ball was in the hole! next round
-                     else 
-                        flag pos x -= abs(player pos x) - abs(ball pos x)
-                        restart round
-                     */
                     _shots++;
-                    if (_ball._position.X > 1700f)
+                    if (_ball._position.X > WIDTH) //utanför skärm
                     {
                         //reset round and give 0 points
                         _flag._position.X = 1600f;
@@ -355,17 +354,9 @@ namespace Green_Masters
 
                         _currentShootingState = "arrowMoving";
                     }
-                    else 
+                    else //flytta flaggan
                     {
-                        //if(_ball._position.X > _flag._position.X)
-                        //{
-                        //    //_flag._position.X += ((_ball._position.X - MathF.Abs(_ball._position.X - _flag._position.X)) - 300f);
-
-                        //}
-                        //else
-                        //{
-                        //    _flag._position.X -= MathF.Abs(_ball._position.X - 300f);
-                        //}
+                        
                         _flag._position.X = 300f + MathF.Abs(_ball._position.X - _flag._position.X);
 
                         _ball._position.X = 300f;
