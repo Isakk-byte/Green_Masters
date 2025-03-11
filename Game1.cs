@@ -422,13 +422,7 @@ namespace Green_Masters
 
             else if (activateState == Gamestate.gameStates.startMenu)
             {
-                _spriteBatch.Begin();
-
-                _spriteBatch.Draw(_groundImg, new Vector2(0, 700), Color.White);
-                _spriteBatch.Draw(_buttonTexture, _scoreboard, Color.Brown);
-
-                _spriteBatch.End();
-                //DrawMenu();
+                DrawMenu();
             }
 
             else if (activateState == Gamestate.gameStates.playing)
@@ -473,7 +467,7 @@ namespace Green_Masters
                 _spriteBatch.Begin();
 
                 _spriteBatch.Draw(_groundImg, new Vector2(0, 700), Color.White);
-                _spriteBatch.Draw(_buttonTexture, _scoreboard, Color.Black);
+                _spriteBatch.Draw(_buttonTexture, _scoreboard, Color.Brown);
 
                 _spriteBatch.End();
             }
