@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 //using Microsoft.Xna.Framework.Media;
+using System.Data.SQLite;
 
 namespace Green_Masters
 {
@@ -23,6 +24,11 @@ namespace Green_Masters
         Texture2D _groundImg;
         Texture2D _powerbarImg;
         Texture2D _powerPickImg;
+
+        private double inputDelay = 0.1;
+        private double inputTimer = 0;
+
+        private Databas db;
 
         private Ball _ball;
         private PowerPick _powerPick;
@@ -93,6 +99,8 @@ namespace Green_Masters
         private float _totalShots = 0;
         public string _scoreText = "Score: 0";
 
+        public string PlayerName = "";
+
         //Song backgroundMusic;
 
         public Game1()
@@ -105,6 +113,7 @@ namespace Green_Masters
             _graphics.PreferredBackBufferHeight = HEIGHT; // Höjd
             _graphics.ApplyChanges();
 
+            db = new Databas();
 
         }
 
@@ -254,7 +263,7 @@ namespace Green_Masters
                 {
 
                     //_currentPower = 10f;
-                    
+
                     //if button pressed, move to next type
                     _previousKeyboardState = _currentKeyboardState;
                     _currentKeyboardState = Keyboard.GetState();
@@ -304,13 +313,13 @@ namespace Green_Masters
 
                         //check if ball is still
                         if (_ball._position.X >= _flag._position.X && _ball._position.X < _flag._position.X + _flagImg.Width - _ballImg.Width
-                            && _ball._position.Y >= 730 - (_flagImg.Width/2) && _ball._position.Y < 730 + (_flagImg.Width / 2)
-                            && _ball._velocity.X < _ball._velocity.Y* 4)
+                            && _ball._position.Y >= 730 - (_flagImg.Width / 2) && _ball._position.Y < 730 + (_flagImg.Width / 2)
+                            && _ball._velocity.X < _ball._velocity.Y * 4)
                         {
                             _currentShootingState = "stopped";
 
                         }
-                        else if(_ball._velocity.X <= 1f && _ball._velocity.Y <= 1f)
+                        else if (_ball._velocity.X <= 1f && _ball._velocity.Y <= 1f)
                         {
                             //to next state
                             _currentShootingState = "stopped";
@@ -320,10 +329,10 @@ namespace Green_Masters
                             _ball._position += _ball._velocity;
                         }
                     }
-                    
+
                     //all other times, move ball accordingly
                 }
-                else if(_currentShootingState == "stopped")
+                else if (_currentShootingState == "stopped")
                 {
                     System.Threading.Thread.Sleep(1500);
 
@@ -349,7 +358,7 @@ namespace Green_Masters
                         {
                             _score += MathF.Round(10000 * MathF.Pow(2.7f, -0.256f * (_shots - 1)));
                         }
-                            //P(slag)=10000 × e^(−0.256(slag−1))
+                        //P(slag)=10000 × e^(−0.256(slag−1))
                         _totalShots += _shots;
                         _shots = 0;
                         _scoreText = "Score: " + _score;
@@ -361,18 +370,18 @@ namespace Green_Masters
                     }
                     else //flytta flaggan
                     {
-                        
+
                         _flag._position.X = 300f + MathF.Abs(_ball._position.X - _flag._position.X);
 
                         _ball._position.X = 300f;
                         _initializeBallShot = false;
-                        
+
                         _currentShootingState = "arrowMoving";
                     }
 
 
 
-                    if (_hole == 5) //Avslutar spelet efter 5 hål
+                    if (_hole == 1) //Avslutar spelet efter 5 hål
                     {
                         activateState = Gamestate.gameStates.endScen;
                     }
@@ -380,7 +389,44 @@ namespace Green_Masters
                 }
             }
 
+            else if (activateState == Gamestate.gameStates.endScen)
+            {
+
+                KeyboardState state = Keyboard.GetState();
+                inputTimer -= gameTime.ElapsedGameTime.TotalSeconds; // Minska timern
+
+                Keys[] keys = state.GetPressedKeys();
+                if (inputTimer <= 0 && keys.Length > 0) // Kontrollera att en tangent är nedtryckt och delay har gått ut
+                {
+                    Keys key = keys[0]; // Ta den första tangenten som är nedtryckt
+
+                    if (key >= Keys.A && key <= Keys.Z && PlayerName.Length < 10)
+                    {
+                        PlayerName += key.ToString();
+                        inputTimer = inputDelay; // Återställ timern
+                    }
+                    else if (key == Keys.Back && PlayerName.Length > 0)
+                    {
+                        PlayerName = PlayerName.Substring(0, PlayerName.Length - 1);
+                        inputTimer = inputDelay; // Återställ timern
+                    }
+                    else if (key == Keys.Enter && PlayerName.Length > 0)
+                    {
+                        SaveScore();
+                    }
+                }
+            }
+
+
+
             base.Update(gameTime);
+        }
+        private void SaveScore()
+        {
+            
+            db.SaveScore(PlayerName, _score);
+
+            // Återställ spelet eller visa en highscore-lista
         }
 
         void UpdateMenu()
@@ -468,7 +514,8 @@ namespace Green_Masters
 
                 _spriteBatch.Draw(_groundImg, new Vector2(0, 700), Color.White);
                 _spriteBatch.Draw(_buttonTexture, _scoreboard, Color.Brown);
-
+                _spriteBatch.DrawString(_buttonFont, "Score: " + _score, new Vector2(750, 150), Color.White);
+                _spriteBatch.DrawString(_buttonFont, "Skriv ditt namn: " + PlayerName, new Vector2(750, 200), Color.White);
                 _spriteBatch.End();
             }
             base.Draw(gameTime);
