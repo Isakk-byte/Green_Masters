@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 //using Microsoft.Xna.Framework.Media;
 using System.Data.SQLite;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Green_Masters
 {
@@ -25,7 +26,7 @@ namespace Green_Masters
         Texture2D _powerbarImg;
         Texture2D _powerPickImg;
 
-        private double inputDelay = 0.1;
+        private double inputDelay = 0.17;
         private double inputTimer = 0;
 
         private Databas db;
@@ -101,7 +102,16 @@ namespace Green_Masters
 
         public string PlayerName = "";
 
-        //Song backgroundMusic;
+        //texten
+        float scale = 1.0f;
+        float elapsedTime = 0f;
+        float animationDuration = 3f;
+        bool growing = true;
+        private float _tempshots = 0;
+
+        string _text = "";
+
+        bool _goal = false;
 
         public Game1()
         {
@@ -131,8 +141,7 @@ namespace Green_Masters
 
 
             _currentMouseState = Mouse.GetState();
-            //if (_gameState == "Game")
-            //{
+            
             _ball = new Ball(new Vector2(0, 0), new Vector2(300, 680), _ballImg, Color.White);
 
             _powerBar = new PowerBar(new Vector2(170, 750), _powerbarImg, Color.White);
@@ -152,7 +161,7 @@ namespace Green_Masters
             //konverterar en vinkel från grader till radianer
             _rotationSpeed = MathHelper.ToRadians(90); // 90 grader per sekund
             _targetRotation = MathHelper.ToRadians(90);
-            //}
+            
 
 
             base.Initialize();
@@ -176,7 +185,7 @@ namespace Green_Masters
             
             //sätter punkten att rotera runt
             _arrowOrigin = new Vector2(_arrowImg.Width / 2, _arrowImg.Height);
-            //_arrowOrigin = new Vector2(_ballImg.Width / 2, _ballImg.Height / 2);
+            
 
             _buttonTexture = new Texture2D(GraphicsDevice, 1, 1);
             _buttonTexture.SetData(new[] { Color.White });
@@ -213,6 +222,8 @@ namespace Green_Masters
             }
             else if (activateState == Gamestate.gameStates.playing)
             {
+                
+                
                 //updatera moln
                 foreach (var cloud in _clouds)
                 {
@@ -262,12 +273,12 @@ namespace Green_Masters
                 else if (_currentShootingState == "powerMoving")
                 {
 
-                    //_currentPower = 10f;
+                    
 
                     //if button pressed, move to next type
                     _previousKeyboardState = _currentKeyboardState;
                     _currentKeyboardState = Keyboard.GetState();
-                    if (/*_currentMouseState.LeftButton == ButtonState.Pressed || */_currentKeyboardState.IsKeyUp(Keys.Space) && _previousKeyboardState.IsKeyDown(Keys.Space))
+                    if (_currentKeyboardState.IsKeyUp(Keys.Space) && _previousKeyboardState.IsKeyDown(Keys.Space))
                     {
                         _currentPower = (_powerPick._position.X - _powerBar._position.X) / 15f;
                         _currentShootingState = "shot";
@@ -302,9 +313,9 @@ namespace Green_Masters
                     else if (_initializeBallShot)
                     {
 
-                        //ball position += (ball velocity.x - 9.8 *deltaTime, ball velocity.y -1 * delta time)
+                        
                         _ball._velocity = new Vector2(_ball._velocity.X, _ball._velocity.Y + (9.8f * deltaTime));
-                        if (_ball._position.Y > 700 /*- _ballImg.Height*/)
+                        if (_ball._position.Y > 700)
                         {
                             _ball._position.Y = 700;
                             _ball._velocity.Y = _ball._velocity.Y * -0.60f; // studs
@@ -335,7 +346,7 @@ namespace Green_Masters
                 else if (_currentShootingState == "stopped")
                 {
                     System.Threading.Thread.Sleep(1500);
-
+                    _goal = false;
                     _shots++;
                     if (_ball._position.X > WIDTH) //utanför skärm
                     {
@@ -349,6 +360,8 @@ namespace Green_Masters
                     else if (MathF.Abs(_ball._position.X - _flag._position.X) <= 50f) //check if goal
                     {
                         _hole++;
+                        _goal = true;
+
                         //ball has been putted into hole! reset round and calc(short for calculation) points
                         if (_shots == 1)
                         {
@@ -358,7 +371,7 @@ namespace Green_Masters
                         {
                             _score += MathF.Round(10000 * MathF.Pow(2.7f, -0.256f * (_shots - 1)));
                         }
-                        //P(slag)=10000 × e^(−0.256(slag−1))
+                        _tempshots = _shots;
                         _totalShots += _shots;
                         _shots = 0;
                         _scoreText = "Score: " + _score;
@@ -380,8 +393,7 @@ namespace Green_Masters
                     }
 
 
-
-                    if (_hole == 1) //Avslutar spelet efter 5 hål
+                    if (_hole == 5) //Avslutar spelet efter 5 hål
                     {
                         activateState = Gamestate.gameStates.endScen;
                     }
@@ -416,10 +428,20 @@ namespace Green_Masters
                     }
                 }
             }
+            float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            elapsedTime += delta;
 
+            if (elapsedTime >= animationDuration)
+            {
+                elapsedTime = 0f; // Återställ tiden efter en cykel
+                growing = true;
+            }
 
-
+            
+            float progress = elapsedTime / animationDuration;
+            scale = 1.0f + 0.5f * (float)Math.Sin(progress * Math.PI); // Växlar mellan 1.0 och 1.5
             base.Update(gameTime);
+            
         }
         private void SaveScore()
         {
@@ -480,10 +502,7 @@ namespace Green_Masters
 
                 _spriteBatch.DrawString(_buttonFont, _scoreText, new Vector2((WIDTH/2-20), 300), Color.White);
 
-                //_spriteBatch.Draw(_powerbarImg, new Vector2(170, 750), Color.White);
-
-
-
+             
                 foreach (var cloud in _clouds)
                 {
                     cloud.Draw(_spriteBatch, _cloudImg);
@@ -505,6 +524,26 @@ namespace Green_Masters
                 _powerBar.Draw(_spriteBatch, _powerbarImg);
                 _powerPick.Draw(_spriteBatch, _powerPickImg);
                 _flag.Draw(_spriteBatch, _flagImg);
+
+                Vector2 textSize = _buttonFont.MeasureString(_text);
+                Vector2 origin = textSize / 2;
+                if (_goal == true)
+                {
+                    if (_tempshots == 1)
+                    {
+                        _text = "Hole In One!!";
+                        
+                    }
+                    else if (_tempshots == 2)
+                    {
+                        _text = "Bogey!";
+                    }
+                    else if (_tempshots == 3)
+                    {
+                        _text = "Par";
+                    }
+                    _spriteBatch.DrawString(_buttonFont, _text, new Vector2(900, 260), Color.Red, 0, origin, scale, SpriteEffects.None, 0);
+                }
 
                 _spriteBatch.End();
             }
