@@ -63,14 +63,12 @@ namespace Green_Masters
 
         public Rectangle _scoreboard;
         public Rectangle _buttonRectangle;
-        public Rectangle _buttonRectangle2;
         public Rectangle _loadbar1;
         public Rectangle _loadbar2;
         public Rectangle _loadbar3;
         public Rectangle _loadbar4;
 
         public bool _isButton1Visible = true;
-        public bool _isButton2Visible = true;
 
         public MouseState _currentMouseState;
         public MouseState _previousMouseState;
@@ -84,8 +82,6 @@ namespace Green_Masters
         public string _buttonText = "Play";
         public Vector2 _buttonTextPosition;
 
-        public string _buttonText2 = "Settings";
-        public Vector2 _buttonTextPosition2;
 
         public string _loadingText = "Loading...";
         public Vector2 _loadingTextPosition;
@@ -130,7 +126,7 @@ namespace Green_Masters
         protected override void Initialize()
         {
             _buttonRectangle = new Rectangle(((WIDTH / 2) - (_playButtonWidth / 2)), ((HEIGHT / 2)+55), _playButtonWidth, _playButtonHeight);
-            _buttonRectangle2 = new Rectangle(((WIDTH / 2) - (_playButtonWidth / 2)), ((HEIGHT / 2) + (_playButtonHeight + 85)), _playButtonWidth, _playButtonHeight);
+            
 
             _scoreboard = new Rectangle((WIDTH / 2)-250, (HEIGHT / 2)-350, 500, 600);
 
@@ -191,16 +187,13 @@ namespace Green_Masters
             _buttonTexture.SetData(new[] { Color.White });
             _buttonFont = Content.Load<SpriteFont>("buttonFont");
             Vector2 textSize = _buttonFont.MeasureString(_buttonText);
-            Vector2 textSize2 = _buttonFont.MeasureString(_buttonText2);
             Vector2 textSize3 = _buttonFont.MeasureString(_loadingText);
             _buttonTextPosition = new Vector2(
                 _buttonRectangle.X + (_playButtonWidth - textSize.X) / 2,
                 _buttonRectangle.Y + (_playButtonHeight - textSize.Y) / 2
             );
 
-            _buttonTextPosition2 = new Vector2(
-            _buttonRectangle2.X + (_playButtonWidth - textSize2.X) / 2,
-            _buttonRectangle2.Y + (_playButtonHeight - textSize2.Y) / 2);
+          
 
             _loadingTextPosition = new Vector2(((WIDTH / 2) - (textSize3.X / 2)), (HEIGHT- 270));
         }
@@ -458,18 +451,14 @@ namespace Green_Masters
                 if (_buttonRectangle.Contains(_currentMouseState.Position))
                 {
                     _isButton1Visible = false;
-                    _isButton2Visible = true;
+                   
                     LoadData loadingScreen = new LoadData();
 
                     callLoadingOnce = true;
                     Thread t = new Thread(() => loadingScreen.LoadMethod(out activateState, ref callLoadingOnce));
                     t.Start();
                 }
-                if (_buttonRectangle2.Contains(_currentMouseState.Position))
-                {
-                    _isButton2Visible = false;
-                    _isButton1Visible = true;
-                }
+                
             }
             _previousMouseState = _currentMouseState;
         }
@@ -605,11 +594,7 @@ namespace Green_Masters
                 _spriteBatch.DrawString(_buttonFont, _buttonText, _buttonTextPosition, Color.White);
             }
 
-            if (_isButton2Visible)
-            {
-                _spriteBatch.Draw(_buttonTexture, _buttonRectangle2, Color.Red);
-                _spriteBatch.DrawString(_buttonFont, _buttonText2, _buttonTextPosition2, Color.White);
-            }
+           
             _spriteBatch.End();
 
         }
