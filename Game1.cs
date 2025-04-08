@@ -458,7 +458,7 @@ namespace Green_Masters
 
         }
 
-        void UpdateMenu()
+        void UpdateMenu() 
         {
             if (_currentMouseState.LeftButton == ButtonState.Pressed && _previousMouseState.LeftButton == ButtonState.Released)
             {
