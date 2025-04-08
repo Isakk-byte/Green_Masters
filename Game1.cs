@@ -7,6 +7,7 @@ using System.Threading;
 //using Microsoft.Xna.Framework.Media;
 using System.Data.SQLite;
 using static System.Net.Mime.MediaTypeNames;
+using System.IO;
 
 namespace Green_Masters
 {
@@ -29,7 +30,6 @@ namespace Green_Masters
         private double inputDelay = 0.17;
         private double inputTimer = 0;
 
-        private Databas db;
 
         private Ball _ball;
         private PowerPick _powerPick;
@@ -75,6 +75,8 @@ namespace Green_Masters
         public KeyboardState _currentKeyboardState;
         public KeyboardState _previousKeyboardState;
 
+        private database tempDB;
+
         public SpriteFont _buttonFont;
 
         public string _mainText = "Green Masters";
@@ -85,6 +87,9 @@ namespace Green_Masters
 
         public string _loadingText = "Loading...";
         public Vector2 _loadingTextPosition;
+
+        public string _highscoreText = "Highscores";
+        public string _playerInsertText = "Skriv ditt namn: ";
 
         private bool callLoadingOnce = false;
 
@@ -108,6 +113,7 @@ namespace Green_Masters
         string _text = "";
 
         bool _goal = false;
+        bool _savedScore;
 
         public Game1()
         {
@@ -119,14 +125,12 @@ namespace Green_Masters
             _graphics.PreferredBackBufferHeight = HEIGHT; // Höjd
             _graphics.ApplyChanges();
 
-            db = new Databas();
-
         }
 
         protected override void Initialize()
         {
             _buttonRectangle = new Rectangle(((WIDTH / 2) - (_playButtonWidth / 2)), ((HEIGHT / 2)+55), _playButtonWidth, _playButtonHeight);
-            
+            tempDB = new database("AIjoel",5000);
 
             _scoreboard = new Rectangle((WIDTH / 2)-250, (HEIGHT / 2)-350, 500, 600);
 
@@ -177,7 +181,6 @@ namespace Green_Masters
             _powerbarImg = Texture2D.FromFile(GraphicsDevice, "../../img/Powerbar.png");
             _powerPickImg = Texture2D.FromFile(GraphicsDevice, "../../img/PowerPick.png");
 
-            //backgroundMusic = Content.Load<Song>("musikfilens_namn_utan_ändelse");
             
             //sätter punkten att rotera runt
             _arrowOrigin = new Vector2(_arrowImg.Width / 2, _arrowImg.Height);
@@ -200,10 +203,7 @@ namespace Green_Masters
 
         protected override void Update(GameTime gameTime)
         {
-
-            //MediaPlayer.Play(backgroundMusic);
-           // MediaPlayer.IsRepeating = true; // Loopa musiken om du vill
-
+            
             _previousMouseState = _currentMouseState;
             _currentMouseState = Mouse.GetState();
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -215,8 +215,10 @@ namespace Green_Masters
             }
             else if (activateState == Gamestate.gameStates.playing)
             {
-                
-                
+
+                _savedScore = false;
+                _scoreText = "Score: " + _score;
+
                 //updatera moln
                 foreach (var cloud in _clouds)
                 {
@@ -229,7 +231,8 @@ namespace Green_Masters
 
                 if (_currentShootingState == "arrowMoving")
                 {
-
+                    _savedScore = false;
+                    
                     //if button pressed, move to next type
                     _previousKeyboardState = _currentKeyboardState;
                     _currentKeyboardState = Keyboard.GetState();
@@ -320,12 +323,14 @@ namespace Green_Masters
                             && _ball._position.Y >= 730 - (_flagImg.Width / 2) && _ball._position.Y < 730 + (_flagImg.Width / 2)
                             && _ball._velocity.X < _ball._velocity.Y * 4)
                         {
+
                             _currentShootingState = "stopped";
 
                         }
                         else if (_ball._velocity.X <= 1f && _ball._velocity.Y <= 1f)
                         {
                             //to next state
+
                             _currentShootingState = "stopped";
                         }
                         else
@@ -371,7 +376,6 @@ namespace Green_Masters
                         _flag._position.X = 1600f;
                         _ball._position.X = 300f;
                         _initializeBallShot = false;
-
                         _currentShootingState = "arrowMoving";
                     }
                     else //flytta flaggan
@@ -379,7 +383,7 @@ namespace Green_Masters
 
                         _flag._position.X = 300f + MathF.Abs(_ball._position.X - _flag._position.X);
 
-                        _ball._position.X = 300f;
+                        _ball._position = new Vector2(300, 680);
                         _initializeBallShot = false;
 
                         _currentShootingState = "arrowMoving";
@@ -415,11 +419,23 @@ namespace Green_Masters
                         PlayerName = PlayerName.Substring(0, PlayerName.Length - 1);
                         inputTimer = inputDelay; // Återställ timern
                     }
-                    else if (key == Keys.Enter && PlayerName.Length > 0)
+                    else if (key == Keys.Enter && PlayerName.Length > 0 && _savedScore == false)
                     {
                         SaveScore();
+                        _savedScore = true;
                     }
+
                 }
+                if(_savedScore == true)
+                {
+                    _score = 0;
+                    _hole = 0;
+                    _shots = 0;
+                    _tempshots = 0;
+                    PlayerName = "";
+                }
+
+                UpdateMenu();
             }
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
             elapsedTime += delta;
@@ -438,10 +454,8 @@ namespace Green_Masters
         }
         private void SaveScore()
         {
-            
-            db.SaveScore(PlayerName, _score);
+            tempDB = new database(PlayerName, Convert.ToInt32(_score));
 
-            // Återställ spelet eller visa en highscore-lista
         }
 
         void UpdateMenu()
@@ -465,8 +479,6 @@ namespace Green_Masters
 
         protected override void Draw(GameTime gameTime)
         {
-            //loading color
-            //GraphicsDevice.Clear(new Color(135,179,93));
 
             //menu himmel färg
             GraphicsDevice.Clear(new Color(163, 238, 255));
@@ -490,8 +502,9 @@ namespace Green_Masters
                 _spriteBatch.Draw(_personImg, new Vector2(10, 380), Color.White);
 
                 _spriteBatch.DrawString(_buttonFont, _scoreText, new Vector2((WIDTH/2-20), 300), Color.White);
+                _spriteBatch.DrawString(_buttonFont, "Hole:"+(_hole+1), new Vector2((WIDTH / 2 - 20)+30, 350), Color.White);
 
-             
+
                 foreach (var cloud in _clouds)
                 {
                     cloud.Draw(_spriteBatch, _cloudImg);
@@ -521,15 +534,14 @@ namespace Green_Masters
                     if (_tempshots == 1)
                     {
                         _text = "Hole In One!!";
-                        
                     }
                     else if (_tempshots == 2)
                     {
-                        _text = "Bogey!";
+                        _text = "Par!";
                     }
                     else if (_tempshots == 3)
                     {
-                        _text = "Par";
+                        _text = "Bogey";
                     }
                     _spriteBatch.DrawString(_buttonFont, _text, new Vector2(900, 260), Color.Red, 0, origin, scale, SpriteEffects.None, 0);
                 }
@@ -540,10 +552,25 @@ namespace Green_Masters
             {
                 _spriteBatch.Begin();
 
+                string ScoreboardDatabase = tempDB.PrintFileContent();
+
+                //Vector2 textSize3 = _buttonFont.MeasureString(_highscore);
+
                 _spriteBatch.Draw(_groundImg, new Vector2(0, 700), Color.White);
                 _spriteBatch.Draw(_buttonTexture, _scoreboard, Color.Brown);
-                _spriteBatch.DrawString(_buttonFont, "Score: " + _score, new Vector2(750, 150), Color.White);
-                _spriteBatch.DrawString(_buttonFont, "Skriv ditt namn: " + PlayerName, new Vector2(750, 200), Color.White);
+                _spriteBatch.DrawString(_buttonFont, "Score: " + _score, new Vector2(WIDTH/2 - _buttonFont.MeasureString("Score: ").X / 2, 100), Color.White);
+                _spriteBatch.DrawString(_buttonFont, _playerInsertText + PlayerName, new Vector2(WIDTH/2 - _buttonFont.MeasureString(_playerInsertText).X / 2, 150), Color.White);
+                _spriteBatch.DrawString(_buttonFont, _highscoreText, new Vector2(WIDTH/2 - _buttonFont.MeasureString(_highscoreText).X / 2, 250), Color.White);
+                _spriteBatch.DrawString(_buttonFont,ScoreboardDatabase, new Vector2(WIDTH / 2 - _buttonFont.MeasureString(_highscoreText).X / 2, 300), Color.White);
+
+                if(_savedScore == true)
+                {
+                    _spriteBatch.Draw(_buttonTexture, _buttonRectangle, Color.Red);
+                    _spriteBatch.DrawString(_buttonFont, "Play Again", new Vector2(WIDTH / 2 - _buttonFont.MeasureString("Play Again").X / 2,
+                    _buttonRectangle.Y + (_playButtonHeight - _buttonFont.MeasureString("Play Again").Y) / 2), Color.White);
+
+                }
+
                 _spriteBatch.End();
             }
             base.Draw(gameTime);
