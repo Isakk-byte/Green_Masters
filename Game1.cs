@@ -115,6 +115,8 @@ namespace Green_Masters
         bool _goal = false;
         bool _savedScore;
 
+
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -196,7 +198,6 @@ namespace Green_Masters
                 _buttonRectangle.Y + (_playButtonHeight - textSize.Y) / 2
             );
 
-          
 
             _loadingTextPosition = new Vector2(((WIDTH / 2) - (textSize3.X / 2)), (HEIGHT- 270));
         }
@@ -361,7 +362,7 @@ namespace Green_Masters
                         _goal = true;
 
                         //ball has been putted into hole! reset round and calc(short for calculation) points
-                        if (_shots == 1)
+                        if (_shots == 3)
                         {
                             _score += 15000;
                         }
@@ -390,7 +391,7 @@ namespace Green_Masters
                     }
 
 
-                    if (_hole == 5) //Avslutar spelet efter 5 hål
+                    if (_hole == 1) //Avslutar spelet efter 5 hål
                     {
                         activateState = Gamestate.gameStates.endScen;
                     }

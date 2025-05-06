@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace Green_Masters
 {
@@ -30,8 +28,10 @@ namespace Green_Masters
             while ((line = sr.ReadLine()) != null)
             {
                 string[] subDiv = line.Split(';');
+
                 Names.Add(subDiv[0]);
                 Score.Add(Convert.ToInt32(subDiv[1]));
+
             }
             sr.Close();
         }
@@ -71,7 +71,7 @@ namespace Green_Masters
             if (!File.Exists("../database.csv"))
             {
                 Console.WriteLine("Filen hittades inte.");
-                return"";
+                return "";
             }
 
             using (StreamReader sr = new StreamReader("../database.csv"))
